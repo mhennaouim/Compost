@@ -1,0 +1,154 @@
+{% extends 'composter_Base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<style>
+    a {
+        font-family: 'Nunito';
+        text-decoration: none;
+        font-size: 1.2em;
+        padding: 10px 0;
+        transition: color 0.4s ease;
+        border-radius: 4px;
+        border: 0.2px solid yellow;
+        color: #DEFF99;
+
+    }
+
+    a:hover {
+        background-color: #DEFF99;
+        transition: color 0.4s ease;
+        color: #857B63;
+    }
+
+    #left-page {
+        height: 100vh;
+        background-color: #857B63;
+    }
+
+    #left-page div:nth-child(1) {
+        width: 90%;
+        padding: 5px;
+        margin-top: 120px;
+        margin-bottom: 80px;
+    }
+
+    #left-page div:nth-child(2),
+    #left-page div:nth-child(3),
+    #left-page div:nth-child(4),
+    #left-page div:nth-child(5),
+    #left-page div:nth-child(6) {
+        width: 90%;
+        padding: 5px 0;
+        margin: 10px 0;
+    }
+
+    #left-page div:nth-child(6) a {
+        color: rgb(255, 150, 100);
+        border: 0.2px solid rgb(255, 150, 100);
+    }
+
+
+    #left-page .icon {
+        font-size: 1.3em;
+    }
+
+    .menu a {
+        display: flex;
+        align-items: center;
+        padding-left: 35px;
+    }
+
+    .menu a i {
+        margin-right: 5px;
+        vertical-align: middle;
+    }
+
+    
+    
+    #right-page {
+        height: 100vh;
+        background-color: #FDF7EA;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .table {
+        width: 80%;
+        background-color: white;
+    }
+</style>    
+
+
+<div class="fluid-container">
+
+
+
+    <div class="row">
+
+        <div class="col-6 col-lg-2 col-sm-4 col-md-4 d-flex flex-column align-items-center text-center menu"
+            id="left-page">
+
+            <div class="logo"><img src="{% static 'images/composter_logo.svg' %}"></div>
+            <div class="c-greeners-calndar"><a href="{% url 'composterHome' %}"><i
+                        class='bx bxs-dashboard icon'></i>Dashboard</a></div>
+            <div class="c-greeners-request"><a href="{% url 'getGreenersOffer'%}"><i
+                        class='bx bx-cart-download icon'></i>Greeners Request</a></div>
+            <div class="c-greeners-request"><a href="{% url 'getPendingMembres' %}"><i
+                        class='bx bxs-user-detail'></i>Pending membres</a></div>
+            <div class="mb-5 c-greeners-request"><a href="#"><i class='bx bxs-user-detail'></i>My membres</a></div>
+            <div class="mt-5"><a href="{% url 'logoff' %}"><i class='bx bx-log-out icon'></i>Logout</a></div>
+
+        </div>
+    
+
+        <div class="col-6 col-lg-10 col-sm-8 col-md-8 d-flex flex-column align-items-center " id="right-page">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Order #</th>
+                        <th scope="col">Greener Name</th>
+                        <th scope="col">Manure.Quantity</th>
+                        <th scope="col">Fert.Quantity</th>
+                        <th scope="col">Bio.Quantity</th>
+                        <th scope="col">StartDate</th>
+                        <th scope="col">EndDate</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for offer in offersArray %}
+                        <tr>
+                            <td>{{ offer.offerid }}</td>
+                            <td>{{ offer.Greener.FirstName }} {{offer.Greener.LastName}}</td>
+                            <td>{{ offer.AnimalManureQuantity }}</td>
+                            <td>{{ offer.PlantFertilizersQuantity }}</td>
+                            <td>{{ offer.BiodegradableFertilizersQuantity }}</td>
+                            <td>{{ offer.StartDate }}</td>
+                            <td>{{ offer.EndDate }}</td>
+                            <td>{{ offer.Status }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+
+
+
+</div>
+
+
+<script>
+
+
+
+</script>
+
+{% endblock %}

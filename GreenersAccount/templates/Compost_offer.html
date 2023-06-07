@@ -1,0 +1,206 @@
+{% extends 'greener_Base.html' %}
+
+{% load static %}
+
+
+{% block content %}
+
+<style>
+  #menu {
+    width: 50px;
+  }
+
+  #menu-text {
+    font-family: 'Open Sans';
+    font-size: 20px;
+    font-weight: bolder;
+  }
+
+  .card-text {
+    font-family: 'Open Sans';
+    font-size: 0.8em;
+  }
+
+  h3 {
+    color: #BEDD00;
+  }
+
+  .quantities:disabled {
+      background-color: #fff; /* or transparent */
+      opacity: 1;
+  }
+
+  #calculate-quantity, #submit-button {
+    margin-top: 40px;
+    width: fit-content;
+  }
+
+
+
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+
+<div class="d-flex justify-content-start align-items-center" style="padding-left:10px; padding-top:10px;">
+  <div><img id="menu" data-bs-toggle="offcanvas" href="#greener-menu" src="{% static 'images/menu-logo.svg' %}"></div>
+  <div class="ms-2" id="menu-text">Menu</div>
+</div>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="greener-menu" aria-labelledby="offcanvasExampleLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <nav class="nav flex-column d-flex justify-content-center align-items-center">
+      <a class="nav-link" href="#">Home</a>
+      <a class="nav-link" href="#">View History</a>
+      <a class="nav-link" href="#">Logout</a>
+    </nav>
+  </div>
+</div>
+
+
+<div class="container">
+  <div class="row d-flex justify-content-center align-items-center text-center">
+    <h3 style="margin-bottom:50px; margin-top:50px;">Compost items</h3>
+  </div>
+  
+  <form name="qf" id="quantity-form" action="" method="POST">
+    {% csrf_token %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 row-cols-xl-6" id="composts-container">
+      {% for compost in composts %}
+      <div class="col mb-4">
+        <div class="card">
+          <img src="{{ compost.CompostImage.url }}" class="card-img-top w-50 mx-auto d-block" alt="...">
+          <div class="card-body">
+            <p class="card-text">Some quick example text to build on the card title </p>
+
+            <div class="form-floating mb-3 quantity">
+              <input type="text" class="form-control {{ compost.CompostType }}" id="{{ compost.CompostName }}" value="0">
+              <label for="{{ compost.CompostName }}">Quantity</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+      
+ 
+
+  <div class="row justify-content-center align-items-center" style="display:none" id="categorize-composts">
+
+
+    <div class="col-6 col-sm-12">
+      <div class="input-group input-group-lg mb-3">
+        <span class="input-group-text" >Mature quantities</span>
+        {{ form.animal_mature_quantities }}
+        <span class="input-group-text">kg</span>
+      </div>
+      <div class="input-group input-group-lg mb-3">
+        <span class="input-group-text">Plant based fertilizers quantities </span>
+        {{ form.plant_based_fertilizers_quantities }}
+        <span class="input-group-text">kg</span>
+      </div>
+      <div class="input-group input-group-lg mb-3">
+        <span class="input-group-text">Biodegradable fertilizers quantities</span>
+        {{ form.biodegradable_fertilizers_quantities }}
+        <span class="input-group-text">kg</span>
+      </div>
+  
+      <div class="input-group">
+        {{ form.date_range }}
+        <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+      </div>
+    </div>
+    <button type="submit"  id="submit-button" class="btn btn-primary">Submit</button>
+  </div>
+
+    <div class="row">
+
+      <div class="col d-flex justify-content-center align-items-center">
+        <button type="button" class="btn btn-outline-primary" id="calculate-quantity">Next</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+
+
+<!-- JavaScript code -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+
+  const NextPickDateBtn = document.getElementById('calculate-quantity');
+  const CompostsContainer = document.getElementById('composts-container');
+  const CategorizeComposts = document.getElementById('categorize-composts');
+
+
+  let AnimalManureElements = document.querySelectorAll('.AnimalManure');
+  let BiodegradableFertilizersElements = document.querySelectorAll('.BiodegradableFertilizers');
+  let PlantFertilizersElements = document.querySelectorAll('.PlantFertilizers');
+  
+  AnimalMatureField = document.getElementById('animal-mature-quantities');
+  BiodegradableFertilizersField = document.getElementById('biodegradable-fertilizers-qauntities');
+  PlantFertilizersField = document.getElementById('plant-based-fertilizers-quantities')
+
+
+
+  NextPickDateBtn.addEventListener('click', function() {
+    //calculate quantities for each compost grouped and show date picker
+    CompostsContainer.style.display = 'none';
+    CategorizeComposts.style.display = 'flex';
+
+    let AnimalManureQuantities = 0;
+    let BiodegradableFertilizersQuantities = 0;
+    let PlantFertilizersQuantities = 0;
+    
+
+    for(let i=0; i<AnimalManureElements.length; i++)
+    {
+      AnimalManureQuantities = AnimalManureQuantities + parseInt(AnimalManureElements[i].value);
+    }
+
+    AnimalMatureField.value = parseInt(AnimalManureQuantities);
+
+
+
+
+
+    for(let i=0; i<BiodegradableFertilizersElements.length; i++)
+    {
+      BiodegradableFertilizersQuantities = BiodegradableFertilizersQuantities + BiodegradableFertilizersElements[i].value;
+    }
+
+    BiodegradableFertilizersField.value = parseInt(BiodegradableFertilizersQuantities);
+
+
+
+    for(let i=0; i<PlantFertilizersElements.length; i++)
+    {
+      PlantFertilizersQuantities = PlantFertilizersQuantities + parseInt(PlantFertilizersElements[i].value);
+    }
+
+    PlantFertilizersField.value = parseInt(PlantFertilizersQuantities);
+
+    
+
+
+});
+
+
+
+
+  flatpickr("#my-date-picker", {
+    mode: "range",
+    dateFormat: "Y-m-d",
+    minDate: "today",
+    maxDate: new Date(new Date().getTime() + (15 * 24 * 60 * 60 * 1000)).toISOString().split("T")[0],
+    allowInput: true,
+    icon: '<i class="bi bi-calendar"></i>'
+  });
+</script>
+
+{% endblock %}
